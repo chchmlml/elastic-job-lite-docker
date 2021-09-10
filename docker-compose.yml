@@ -1,0 +1,33 @@
+version: '3'
+services:
+  stock-collection:
+    image: chchmlml/stock-monitor-collection:latest
+    container_name: stock-collection
+    restart: always
+    ports:
+      - "12001:12001"
+
+  stock-prometheus:
+    image: prom/prometheus
+    container_name: stock-prometheus
+    restart: always
+    ports:
+      - "19090:9090"
+    volumes:
+      - ./prometheus/prometheus:/etc/prometheus
+      - ./prometheus/prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  stock-grafana:
+    image: grafana/grafana
+    container_name: stock-grafana
+    restart: always
+    ports:
+      - "13000:3000"
+    volumes:
+      - ./prometheus/grafana_data:/var/lib/grafana
+        
+networks:
+  default:
